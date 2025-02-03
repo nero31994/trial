@@ -3,25 +3,23 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 
 const app = express();
-app.use(express.json()); // To parse JSON data
-app.use(express.urlencoded({ extended: true })); // To parse form data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const SECRET_KEY = 'nero_secret_key';
-
-// In-memory user storage (replace with database later)
 let users = [];
 
-// Default route (homepage)
+// Homepage
 app.get('/', (req, res) => {
     res.send('Welcome to NERO IPTV!');
 });
 
-// Serve Login Page
+// Login Page
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
 });
 
-// Serve Sign-Up Page
+// Sign-Up Page
 app.get('/signup', (req, res) => {
     res.sendFile(path.join(__dirname, 'signup.html'));
 });
@@ -29,14 +27,12 @@ app.get('/signup', (req, res) => {
 // Sign-Up Route
 app.post('/signup', (req, res) => {
     const { username, password } = req.body;
-
-    // Check if username already exists
     const existingUser = users.find(user => user.username === username);
+    
     if (existingUser) {
         return res.status(409).json({ message: 'Username already taken' });
     }
 
-    // Add new user
     const newUser = { username, password };
     users.push(newUser);
     res.json({ message: 'Account created successfully!', user: newUser });
@@ -55,11 +51,11 @@ app.post('/login', (req, res) => {
     }
 });
 
-// Account Management (View All Users - Admin Only)
+// View All Accounts
 app.get('/manage-accounts', (req, res) => {
     res.json(users);
 });
 
-// Start the server
+// Start Server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
