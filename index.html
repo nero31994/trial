@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shaka Player with Widevine DRM</title>
+</head>
+<body>
+  <video id="video" width="640" controls></video>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/3.0.0/shaka-player.compiled.js"></script>
+  <script>
+    // Initialize Shaka Player
+    const video = document.getElementById('video');
+    const player = new shaka.Player(video);
+
+    // Configure DRM with the Widevine license server URL
+    const drmConfig = {
+      widevine: {
+        licenseServerUri: 'http://143.44.136.74:9443/widevine/?deviceId=02:00:00:00:00:00'
+      }
+    };
+
+    // Apply DRM configuration to the player
+    player.configure({
+      drm: drmConfig
+    });
+
+    // Listen for error events
+    player.addEventListener('error', onError);
+
+    // Load the MPD stream
+    player.load('http://143.44.136.111:6910/001/2/ch00000090990000001252/manifest.mpd?virtualDomain=001.live_hls.zte.com')
+      .then(function() {
+        console.log('The video has been successfully loaded!');
+      })
+      .catch(onError);
+
+    // Handle errors
+    function onError(event) {
+      console.error('Error code', event.detail.code, 'object', event.detail);
+    }
+  </script>
+</body>
+</html>
